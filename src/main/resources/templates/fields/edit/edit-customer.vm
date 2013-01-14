@@ -1,0 +1,82 @@
+##            $action.getClass().getName()<br/>
+##            $customField.getClass().getName()<br/>
+##            $customField.getCustomFieldType().getClass().getName()<br/>
+
+<table>
+    <tr>
+        <td>
+            #controlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters.noHeader)
+        </td>
+        <td>
+        ##            <label for="cust">Заказчик</label>
+        <select name="customerOfEquipment" id="customerOfEquipment">
+##        <select id="groups" name="groups">
+            #foreach ($cust in $customField.getCustomFieldType().getAllCustomers())
+                <option value="$cust.id" id="$cust.id">$cust.jiraGroupName</option>
+            #end
+        </select>
+        </td>
+        <td>
+#*<label for="$customField.getCustomFieldType().getSerialNumberCF().id">Серийный номер</label>
+<select id="$customField.getCustomFieldType().getSerialNumberCF().id" name="$customField.getCustomFieldType().getSerialNumberCF().id">*#
+            <label for="serialNums">Серийный номер</label>
+            <select id="serialNums" name="serialNumber">
+                #foreach ($equipment in $customField.getCustomFieldType().getAllEquipments())
+                    <option class="sub_${equipment.customer.id}"
+                            value="$velocityhelper.urlencode($equipment.serial)">$equipment.serial</option>
+                #end
+            </select>
+        <td>
+            <label for="invNumber">Инвентарный номер</label>
+            <input type="text" id="invNumber" name="invNumber" readonly="true"/></td>
+    </tr>
+</table>
+<script>
+    jQuery(function ($) {
+        //        makeSublist('serialNums', '', true, '');
+        makeSublist('customerOfEquipment', 'serialNums', false, '1');
+        function makeSublist(parent, child, isSubselectOptional, childVal)
+        {
+            $("body").append("<select style='display:none' id='" + parent + child + "'></select>");
+            $('#' + parent + child).html($("#" + child + " option"));
+
+            var parentValue = $('#' + parent).attr('value');
+            $('#' + child).html($("#" + parent + child + " .sub_" + parentValue).clone());
+
+            childVal = (typeof childVal == "undefined") ? "" : childVal;
+            $("#" + child + ' option[value="' + childVal + '"]').attr('selected', 'selected');
+            $('#' + parent).change(
+                    function()
+                    {
+                        var parentValue = $('#' + parent).attr('value');
+                        $('#' + child).html($("#" + parent + child + " .sub_" + parentValue).clone());
+                        if (isSubselectOptional) $('#' + child).prepend("<option value='none'> -- Select -- </option>");
+                        $('#' + child).trigger("change");
+                        $('#' + child).focus();
+                        #foreach ($equipment in $customField.getCustomFieldType().getAllEquipments())
+                            if ($('#serialNums option:selected').val() == '' || !$('#serialNums option:selected').length) {
+                                $('#invNumber').val('');
+                            }
+                            else if ('$equipment.serial' == $('#serialNums option:selected').val()) {
+                                $('#invNumber').val('$equipment.inv');
+                            }
+                        #end
+                    }
+                    );
+        }
+        $('#serialNums').change(
+                function() {
+                    #foreach ($equipment in $customField.getCustomFieldType().getAllEquipments())
+                        if ($('#serialNums option:selected').val() == '' || !$('#serialNums option:selected').length) {
+                            $('#invNumber').val('');
+                        }
+                        else if ('$equipment.serial' == $('#serialNums option:selected').val()) {
+                            $('#invNumber').val('$equipment.inv');
+                        }
+                    #end
+                });
+
+
+    });
+</script>
+#controlFooter ($action $fieldLayoutItem.fieldDescription $displayParameters.noHeader)

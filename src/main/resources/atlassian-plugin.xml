@@ -1,0 +1,40 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.artifactId}">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+    </plugin-info>
+
+    <customfield-type key="customer" name="Заказчик"
+                      class="dementiev.plugin.equipment.customfield.CustomerCF">
+        <description>заказчик оборудования.</description>
+        <resource type="velocity" name="view" location="templates/fields/view/view-customer.vm"/>
+        <resource type="velocity" name="edit" location="templates/fields/edit/edit-customer.vm"/>
+        <resource type="velocity" name="column-view" location="templates/fields/view/view-customer.vm"/>
+    </customfield-type>
+
+    <customfield-type key="serial" name="Серийный номер"
+                      class="dementiev.plugin.equipment.customfield.SerialNumberCF">
+        <description>Серийный номер оборудования</description>
+        <resource type="velocity" name="view" location="templates/fields/view/view-serial.vm"/>
+        <!--<resource type="velocity" name="edit" location="templates/fields/view/view-serialnum.vm"/>-->
+        <resource type="velocity" name="column-view" location="templates/fields/view/view-serial.vm"/>
+    </customfield-type>
+
+    <customfield-type key="inv" name="Инвентарный номер"
+                      class="dementiev.plugin.equipment.customfield.InvNumberCF">
+        <description>Инвентарный номер оборудования</description>
+        <resource type="velocity" name="view" location="templates/fields/view/view-inv.vm"/>
+        <!--<resource type="velocity" name="edit" location="templates/fields/view/view-serialnum.vm"/>-->
+        <resource type="velocity" name="column-view" location="templates/fields/view/view-inv.vm"/>
+    </customfield-type>
+
+    <webwork1 key="EquipmentPluginActions" name="Equipment Plugin Actions" class="java.lang.Object">
+        <actions>
+        <action name="dementiev.plugin.equipment.action.MyCreateIssueDetails" alias="CreateIssueDetails">
+            <view name="error">/secure/views/createissue-details.jsp</view>
+            <view name="input">/secure/views/createissue-details.jsp</view>
+        </action>
+        </actions>
+    </webwork1>
+</atlassian-plugin>
